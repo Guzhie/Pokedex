@@ -1,21 +1,16 @@
-import { Platform, StyleSheet } from 'react-native';
-import { Colors } from '@/constants/colors';
+import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
     button: {
         width: '100%',
-        height: Platform.select({
-            ios: 40,
-            android: 40,
-            default: 40, 
-        }),
-        backgroundColor: Colors.btnPrimary,
+        height: 52,
+        backgroundColor: '#E15610',
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',   
     },
     title: {
-        color: Colors.labelPrimary,
+        color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
     }

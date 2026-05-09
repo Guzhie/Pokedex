@@ -8,9 +8,34 @@ export const Colors = {
     labelPrimary: '#FFFFFF',
     txtPrimary: '#121214',
     
+    dexCard: {
+        border: '#000000',
+        background: '#FFFFFF',
+        textMuted: '#666666',
+    },
+
+    
     semantic: {
-        error: '#B71C1C',
-        success: '#1B5E20',
+        error: {
+            bg: '#FFEBEE',
+            border: '#B71C1C',
+            text: '#B71C1C'
+        },
+        success: {
+            bg: '#E8F5E9',
+            border: '#1B5E20',
+            text: '#1B5E20'
+        },
+        warning: {
+            bg: '#FFF8E1',
+            border: '#FF8F00',
+            text: '#FF8F00'
+        },
+        info: {
+            bg: '#E3F2FD',
+            border: '#2196F3',
+            text: '#0D47A1'
+        }
     },
 
     gray: {

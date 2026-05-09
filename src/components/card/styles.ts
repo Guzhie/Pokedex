@@ -1,28 +1,17 @@
-import { Platform, StyleSheet } from 'react-native';
-import { Colors } from '@/constants/colors';
+import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   card: {
-    backgroundColor: Colors.white,
+    backgroundColor: '#FFF',
     borderRadius: 12,
-    padding: 24,
+    padding: 16,
     gap: 16,
 
-    shadowColor: Colors.black,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 4, 
 
-    ...Platform.select({
-      web: {
-        width: 450,       
-        alignSelf: 'center', 
-        maxWidth: '90%', 
-      },
-      default: {
-        width: '100%',    
-      }
-    })
+    elevation: 4, 
   },
 });
