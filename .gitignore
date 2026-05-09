@@ -30,8 +30,8 @@ yarn-error.*
 *.pem
 
 #IDE
-.vscode
-.cursor
+.vscode/
+.cursor/
 
 # local env files
 .env*.local
