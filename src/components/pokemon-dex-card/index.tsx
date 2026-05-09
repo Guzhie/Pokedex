@@ -12,115 +12,15 @@ function formatDexNo(n: number) {
   return String(n).padStart(4, '0');
 }
 
-export function PokemonDexCard({ pokemon }: Props) {
-  const [open, setOpen] = useState(false);
-  const { stats } = pokemon;
-
-  return (
-    <>
-      {/* ── Card compacto ── */}
-      <Pressable style={styles.card} onPress={() => setOpen(true)}>
-        <View style={styles.imgBox}>
-          <Image
-            source={{ uri: pokemon.spriteUri }}
-            style={styles.sprite}
-            resizeMode="contain"
-          />
-        </View>
-        <View style={styles.info}>
-          <View style={styles.header}>
-            <Text style={styles.name} numberOfLines={1}>{pokemon.name}</Text>
-            <Text style={styles.dexNo}>{formatDexNo(pokemon.dexNumber)}</Text>
-          </View>
-          <Text style={styles.type} numberOfLines={1}>{pokemon.types}</Text>
-          <View style={styles.divider} />
-          <View style={styles.statsGrid}>
-            <Text style={styles.stat}>HP <Text style={styles.statNum}>{stats.hp}</Text></Text>
-            <Text style={styles.stat}>Vel <Text style={styles.statNum}>{stats.speed}</Text></Text>
-            <Text style={styles.stat}>Atk <Text style={styles.statNum}>{stats.attack}</Text></Text>
-            <Text style={styles.stat}>Def <Text style={styles.statNum}>{stats.defense}</Text></Text>
-            <Text style={styles.stat}>SpA <Text style={styles.statNum}>{stats.spAtk}</Text></Text>
-            <Text style={styles.stat}>SpD <Text style={styles.statNum}>{stats.spDef}</Text></Text>
-          </View>
-          <Text style={styles.total}>TOTAL: {pokemon.total}</Text>
-        </View>
-      </Pressable>
-
-      {/* ── Modal de detalhes ── */}
-      <Modal
-        visible={open}
-        animationType="slide"
-        transparent
-        onRequestClose={() => setOpen(false)}
-      >
-        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
-          <Pressable style={styles.sheet} onPress={() => {}}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-
-              {/* Cabeçalho */}
-              <View style={styles.modalHeader}>
-                <Image
-                  source={{ uri: pokemon.spriteUri }}
-                  style={styles.modalSprite}
-                  resizeMode="contain"
-                />
-                <View style={styles.modalTitleBlock}>
-                  <Text style={styles.modalName}>{pokemon.name}</Text>
-                  <Text style={styles.modalNo}>Nº {formatDexNo(pokemon.dexNumber)}</Text>
-                  <Text style={styles.modalCategory}>{pokemon.category}</Text>
-                </View>
-              </View>
-
-              <View style={styles.modalDivider} />
-
-              {/* Infos */}
-              <Row label="Altura" value={pokemon.height} />
-              <Row label="Peso" value={pokemon.weight} />
-              <Row label="Tipo" value={pokemon.types} />
-              <Row label="Fraquezas" value={pokemon.weaknesses} />
-              <Row label="Evolução" value={pokemon.evolution} />
-
-              {/* Habilidade com itálico */}
-              <View style={styles.row}>
-                <Text style={styles.rowLabel}>Habilidades</Text>
-                <Text style={styles.rowValue}>
-                  {pokemon.ability.before}
-                  <Text style={styles.italic}>{pokemon.ability.italic}</Text>
-                  {pokemon.ability.after ?? ''}
-                </Text>
-              </View>
-
-              <View style={styles.modalDivider} />
-
-              {/* Stats */}
-              <Text style={styles.statsTitle}>Estatísticas</Text>
-              <View style={styles.modalStatsGrid}>
-                <StatBox label="HP"           value={stats.hp} />
-                <StatBox label="Velocidade"   value={stats.speed} />
-                <StatBox label="Ataque"       value={stats.attack} />
-                <StatBox label="Defesa"       value={stats.defense} />
-                <StatBox label="Atq. Esp."    value={stats.spAtk} />
-                <StatBox label="Def. Esp."    value={stats.spDef} />
-              </View>
-              <Text style={styles.modalTotal}>TOTAL: {pokemon.total}</Text>
-
-              <Pressable style={styles.closeBtn} onPress={() => setOpen(false)}>
-                <Text style={styles.closeBtnText}>Fechar</Text>
-              </Pressable>
-
-            </ScrollView>
-          </Pressable>
-        </Pressable>
-      </Modal>
-    </>
-  );
+function TypeBadge({ label }: { label: string }) {
+  return <View style={styles.badge}><Text style={styles.badgeText}>{label}</Text></View>;
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function InfoRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <View style={styles.row}>
-      <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
+    <View style={styles.infoRow}>
+      <Text style={styles.infoLabel}>{label}</Text>
+      <View style={styles.infoValueWrap}>{children}</View>
     </View>
   );
 }
@@ -134,113 +34,203 @@ function StatBox({ label, value }: { label: string; value: number }) {
   );
 }
 
+export function PokemonDexCard({ pokemon }: Props) {
+  const [open, setOpen] = useState(false);
+  const { stats } = pokemon;
+  const types = pokemon.types.split(', ');
+
+  return (
+    <>
+      {/* ── Card compacto ── */}
+      <Pressable style={styles.card} onPress={() => setOpen(true)}>
+        <View style={styles.imgBox}>
+          <Image source={{ uri: pokemon.spriteUri }} style={styles.sprite} resizeMode="contain" />
+        </View>
+        <View style={styles.body}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.cardName} numberOfLines={1}>{pokemon.name}</Text>
+            <Text style={styles.cardNo}>{formatDexNo(pokemon.dexNumber)}</Text>
+          </View>
+          <View style={styles.badgeRow}>
+            {types.map(t => <TypeBadge key={t} label={t} />)}
+          </View>
+          <View style={styles.cardDivider} />
+          <View style={styles.statRow}>
+            <Text style={styles.statInline}>HP <Text style={styles.statInlineNum}>{stats.hp}</Text></Text>
+            <Text style={styles.statInline}>Atk <Text style={styles.statInlineNum}>{stats.attack}</Text></Text>
+            <Text style={styles.statInline}>Def <Text style={styles.statInlineNum}>{stats.defense}</Text></Text>
+          </View>
+          <View style={styles.statRow}>
+            <Text style={styles.statInline}>SpA <Text style={styles.statInlineNum}>{stats.spAtk}</Text></Text>
+            <Text style={styles.statInline}>SpD <Text style={styles.statInlineNum}>{stats.spDef}</Text></Text>
+            <Text style={styles.statInline}>Vel <Text style={styles.statInlineNum}>{stats.speed}</Text></Text>
+          </View>
+          <Text style={styles.cardTotal}>Total: {pokemon.total}</Text>
+        </View>
+      </Pressable>
+
+      {/* ── Modal ── */}
+      <Modal visible={open} animationType="slide" transparent onRequestClose={() => setOpen(false)}>
+        <Pressable style={styles.backdrop} onPress={() => setOpen(false)}>
+          <Pressable style={styles.sheet} onPress={() => {}}>
+            <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+
+              {/* Hero */}
+              <View style={styles.hero}>
+                <Image source={{ uri: pokemon.spriteUri }} style={styles.heroSprite} resizeMode="contain" />
+                <View>
+                  <Text style={styles.heroName}>{pokemon.name}</Text>
+                  <Text style={styles.heroNo}>Nº {formatDexNo(pokemon.dexNumber)}</Text>
+                  <Text style={styles.heroCat}>{pokemon.category}</Text>
+                </View>
+              </View>
+
+              <View style={styles.modalBody}>
+                {/* Infos */}
+                <View style={styles.infoBlock}>
+                  <InfoRow label="Altura"><Text style={styles.infoValue}>{pokemon.height}</Text></InfoRow>
+                  <InfoRow label="Peso"><Text style={styles.infoValue}>{pokemon.weight}</Text></InfoRow>
+                  <InfoRow label="Tipo"><Text style={styles.infoValue}>{pokemon.types}</Text></InfoRow>
+                  <InfoRow label="Fraquezas"><Text style={styles.infoValue}>{pokemon.weaknesses}</Text></InfoRow>
+                  <InfoRow label="Evolução"><Text style={styles.infoValue}>{pokemon.evolution}</Text></InfoRow>
+                  <InfoRow label="Habilidades">
+                    <Text style={styles.infoValue}>
+                      {pokemon.ability.before}
+                      <Text style={styles.italic}>{pokemon.ability.italic}</Text>
+                      {pokemon.ability.after ?? ''}
+                    </Text>
+                  </InfoRow>
+                </View>
+
+                {/* Stats */}
+                <Text style={styles.sectionTitle}>Estatísticas</Text>
+                <View style={styles.statsGrid}>
+                  <StatBox label="HP"        value={stats.hp} />
+                  <StatBox label="Velocidade" value={stats.speed} />
+                  <StatBox label="Ataque"    value={stats.attack} />
+                  <StatBox label="Defesa"    value={stats.defense} />
+                  <StatBox label="Atq. Esp." value={stats.spAtk} />
+                  <StatBox label="Def. Esp." value={stats.spDef} />
+                </View>
+
+                <View style={styles.totalRow}>
+                  <Text style={styles.totalText}>Total: <Text style={styles.totalNum}>{pokemon.total}</Text></Text>
+                </View>
+
+                <Pressable style={styles.closeBtn} onPress={() => setOpen(false)}>
+                  <Text style={styles.closeBtnText}>Fechar</Text>
+                </Pressable>
+              </View>
+
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </>
+  );
+}
+
+const BLUE_BG   = '#E6F1FB';
+const BLUE_MID  = '#185FA5';
+const BLUE_DARK = '#042C53';
+const RED_SOLID = '#E24B4A';
+
 const styles = StyleSheet.create({
   // ── Card compacto ──
   card: {
     flexDirection: 'row',
-    borderWidth: 1,
-    borderColor: Colors.black,
-    borderRadius: 6,
-    overflow: 'hidden',
     backgroundColor: Colors.white,
+    borderWidth: 0.5,
+    borderColor: '#D0D0D0',
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   imgBox: {
-    width: 72,
-    height: 72,
+    width: 80,
+    height: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRightWidth: StyleSheet.hairlineWidth,
-    borderRightColor: Colors.black,
-    backgroundColor: Colors.background,
+    backgroundColor: BLUE_BG,
   },
-  sprite: { width: 60, height: 60 },
-  info: { flex: 1, minWidth: 0, padding: 6, gap: 2 },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
-    marginBottom: 2,
-  },
-  name: { flex: 1, fontSize: 13, fontWeight: '600', color: Colors.black },
-  dexNo: { fontSize: 10, color: Colors.gray[500], marginLeft: 4 },
-  type: { fontSize: 10, color: Colors.gray[500] },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.gray[500],
-    marginVertical: 3,
-  },
-  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
-  stat: { width: '48%', fontSize: 9, color: Colors.gray[500] },
-  statNum: { color: Colors.black, fontWeight: '600' },
-  total: { fontSize: 9, fontWeight: '700', color: Colors.black, marginTop: 2 },
+  sprite: { width: 64, height: 64 },
+  body: { flex: 1, minWidth: 0, padding: 10, gap: 3 },
+  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  cardName: { fontSize: 15, fontWeight: '500', color: Colors.txtPrimary, flex: 1 },
+  cardNo: { fontSize: 11, color: Colors.gray[500], marginLeft: 4 },
+  badgeRow: { flexDirection: 'row', gap: 4 },
+  badge: { backgroundColor: BLUE_BG, borderRadius: 4, paddingHorizontal: 7, paddingVertical: 2 },
+  badgeText: { fontSize: 11, color: BLUE_MID },
+  cardDivider: { height: StyleSheet.hairlineWidth, backgroundColor: '#D0D0D0', marginVertical: 2 },
+  statRow: { flexDirection: 'row', gap: 12 },
+  statInline: { fontSize: 11, color: Colors.gray[500], flex: 1 },
+  statInlineNum: { color: Colors.txtPrimary, fontWeight: '500' },
+  cardTotal: { fontSize: 11, color: Colors.gray[500], fontWeight: '500' },
 
   // ── Modal ──
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'flex-end',
   },
   sheet: {
     backgroundColor: Colors.white,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
-    padding: 20,
-    maxHeight: '85%',
+    overflow: 'hidden',
+    maxHeight: '88%',
   },
-  modalHeader: {
+  hero: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 16,
-    marginBottom: 12,
+    backgroundColor: BLUE_BG,
+    padding: 20,
   },
-  modalSprite: { width: 96, height: 96 },
-  modalTitleBlock: { flex: 1, gap: 2 },
-  modalName: { fontSize: 24, fontWeight: '700', color: Colors.black },
-  modalNo: { fontSize: 13, color: Colors.gray[500] },
-  modalCategory: { fontSize: 12, color: Colors.gray[500], fontStyle: 'italic' },
-  modalDivider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: Colors.gray[500],
-    marginVertical: 10,
-  },
-  row: {
+  heroSprite: { width: 88, height: 88 },
+  heroName: { fontSize: 22, fontWeight: '500', color: BLUE_DARK },
+  heroNo: { fontSize: 12, color: BLUE_MID, marginTop: 2 },
+  heroCat: { fontSize: 12, color: BLUE_MID, fontStyle: 'italic', marginTop: 2 },
+  modalBody: { padding: 16, gap: 12 },
+  infoBlock: { gap: 0 },
+  infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 4,
+    alignItems: 'flex-start',
+    paddingVertical: 6,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#D0D0D0',
     gap: 8,
   },
-  rowLabel: { fontSize: 13, fontWeight: '600', color: Colors.black, minWidth: 80 },
-  rowValue: { fontSize: 13, color: Colors.black, flex: 1, textAlign: 'right' },
-  italic: { fontStyle: 'italic' },
-  statsTitle: { fontSize: 14, fontWeight: '700', color: Colors.black, marginBottom: 8 },
-  modalStatsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+  infoLabel: { fontSize: 12, color: Colors.gray[500], minWidth: 80 },
+  infoValueWrap: { flex: 1, alignItems: 'flex-end' },
+  infoValue: { fontSize: 12, color: Colors.txtPrimary, fontWeight: '500', textAlign: 'right' },
+  italic: { fontStyle: 'italic', fontWeight: '400' },
+  sectionTitle: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: Colors.gray[500],
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
+  statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   statBox: {
-    width: '30%',
+    width: '31%',
     backgroundColor: Colors.background,
-    borderRadius: 6,
-    padding: 8,
-    alignItems: 'center',
-  },
-  statBoxNum: { fontSize: 18, fontWeight: '700', color: Colors.black },
-  statBoxLabel: { fontSize: 10, color: Colors.gray[500], marginTop: 2 },
-  modalTotal: {
-    fontSize: 14,
-    fontWeight: '700',
-    fontStyle: 'italic',
-    color: Colors.black,
-    marginTop: 12,
-    textAlign: 'right',
-  },
-  closeBtn: {
-    marginTop: 20,
-    backgroundColor: Colors.btnPrimary,
     borderRadius: 8,
-    paddingVertical: 12,
+    padding: 10,
     alignItems: 'center',
   },
-  closeBtnText: { color: Colors.labelPrimary, fontWeight: '600', fontSize: 15 },
+  statBoxNum: { fontSize: 20, fontWeight: '500', color: Colors.txtPrimary },
+  statBoxLabel: { fontSize: 10, color: Colors.gray[500], marginTop: 2 },
+  totalRow: { alignItems: 'flex-end' },
+  totalText: { fontSize: 13, color: Colors.gray[500], fontWeight: '500' },
+  totalNum: { color: Colors.txtPrimary },
+  closeBtn: {
+    backgroundColor: RED_SOLID,
+    borderRadius: 8,
+    paddingVertical: 13,
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  closeBtnText: { color: Colors.white, fontSize: 14, fontWeight: '500' },
 });

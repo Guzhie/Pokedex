@@ -2,51 +2,59 @@ import { List } from '@/components/list';
 import { PokemonDexCard } from '@/components/pokemon-dex-card';
 import { MOCK_POKEMON } from '@/constants/mockPokemon';
 import { useAuth } from '@/context/AuthContext';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function Dashboard() {
-    const { user, signOut } = useAuth();
+  const { user, signOut } = useAuth();
 
-    const posts = [
-        { id: '1', title: 'Item 1', description: 'Descrição 1' },
-        { id: '2', title: 'Item 2', description: 'Descrição 2' },
-        { id: '3', title: 'Item 3', description: 'Descrição 3' },
-    ];
-
-    return (
-        <View style={styles.screen}>
-            <Text style={styles.heading}>Olá, {user}</Text>
-            <Button title="Sair" onPress={signOut} />
-    
-            <View style={{ flex: 1 }}> 
-                <List
-                    data={MOCK_POKEMON}
-                    onLoadMore={() => {}}
-                    minColumnWidth={340}
-                    renderItemContent={(item) => <PokemonDexCard pokemon={item} />}
-                />
-            </View>
+  return (
+    <View style={styles.screen}>
+      <View style={styles.header}>
+        <View style={styles.avatarWrap}>
+          <Text style={styles.avatarText}>{user?.[0]?.toUpperCase()}</Text>
         </View>
-    );    
+        <Text style={styles.username}>{user}</Text>
+        <Pressable style={styles.exitBtn} onPress={signOut}>
+          <Text style={styles.exitText}>Sair</Text>
+        </Pressable>
+      </View>
+
+      <View style={{ flex: 1 }}>
+        <List
+          data={MOCK_POKEMON}
+          onLoadMore={() => {}}
+          minColumnWidth={340}
+          renderItemContent={(item) => <PokemonDexCard pokemon={item} />}
+        />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        padding: 16,
-        gap: 12,
-    },
-    heading: {
-        fontSize: 18,
-        fontWeight: '600',
-    },
-    row: {
-        paddingVertical: 8,
-        borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomColor: '#ccc',
-        gap: 4,
-    },
-    rowTitle: {
-        fontWeight: '600',
-    },
+  screen: { flex: 1, backgroundColor: '#F2F2F2', padding: 16, gap: 12 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#D0D0D0',
+  },
+  avatarWrap: {
+    width: 34, height: 34, borderRadius: 17,
+    backgroundColor: '#E6F1FB',
+    justifyContent: 'center', alignItems: 'center',
+  },
+  avatarText: { fontSize: 13, fontWeight: '500', color: '#0C447C' },
+  username: { flex: 1, fontSize: 15, fontWeight: '500', color: '#121214' },
+  exitBtn: {
+    backgroundColor: '#FCEBEB',
+    borderWidth: 0.5,
+    borderColor: '#F09595',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+  },
+  exitText: { fontSize: 12, color: '#A32D2D' },
 });
